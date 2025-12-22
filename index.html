@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Архив 11Б | Школа 300</title>
+    <script>
+        // --- ЗАЩИТА ПАРОЛЕМ ---
+        var pass = 'greenflagbek'; 
+        var input = prompt('Введите пароль для просмотра:');
+        
+        if (input !== pass) {
+            // Если пароль неверный, заменяем всё содержимое страницы
+            document.write('<!DOCTYPE html><html><body style="background:#1a261a;color:white;text-align:center;padding-top:100px;font-family:sans-serif;"><h1>❌ Доступ закрыт</h1><p>Обновите страницу и введите правильный пароль.</p></body></html>');
+            window.stop(); 
+        }
+    </script>
+    <style>
+        body {
+            margin: 0;
+            background-color: #1a261a; 
+            color: #e0e0e0;
+            font-family: sans-serif;
+            padding: 10px;
+            min-height: 100vh;
+        }
+
+        /* Фото на фоне - компактно и ближе к центру */
+        .bg-photo {
+            position: fixed;
+            z-index: -1;
+            opacity: 0.22;
+            width: 150px;
+            border: 4px solid #fff;
+            pointer-events: none;
+        }
+        .p2 { top: 8%; right: 8%; transform: rotate(10deg); }
+        .p3 { top: 42%; left: 5%; transform: rotate(-8deg); }
+        .p4 { bottom: 12%; right: 10%; transform: rotate(5deg); }
+
+        .container {
+            max-width: 750px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        header {
+            text-align: center;
+            padding: 15px;
+            background: rgba(0,0,0,0.4);
+            border-radius: 15px;
+            margin-bottom: 20px;
+            border: 1px dashed rgba(255,255,255,0.2);
+        }
+
+        h1 { font-size: 1.4rem; color: #fff; margin: 0; }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); 
+            gap: 12px;
+        }
+
+        .card {
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #333;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+        
+        video {
+            width: 100%;
+            display: block;
+        }
+
+        .label {
+            padding: 8px;
+            text-align: center;
+            font-size: 0.75rem;
+            background: #111;
+            color: #a8cba8;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            font-size: 0.7rem;
+            opacity: 0.4;
+        }
+    </style>
+</head>
+<body>
+
+    <img src="bg2.jpg" class="bg-photo p2">
+    <img src="bg3.jpg" class="bg-photo p3">
+    <img src="bg4.jpg" class="bg-photo p4">
+
+    <div class="container">
+        <header>
+            <h1>school 300 | "11B"</h1>
+            <p>Доступ разрешен ✅</p>
+        </header>
+
+        <div class="grid">
+            <div class="card"><video controls preload="metadata"><source src="vid2.mp4" type="video/mp4"></video><div class="label">Видео 2</div></div>
+            <div class="card"><video controls preload="metadata"><source src="vid7.mp4" type="video/mp4"></video><div class="label">Видео 7</div></div>
+            <div class="card"><video controls preload="metadata"><source src="vid8.mp4" type="video/mp4"></video><div class="label">Видео 8</div></div>
+            <div class="card"><video controls preload="metadata"><source src="vid10.mp4" type="video/mp4"></video><div class="label">Видео 10</div></div>
+            <div class="card"><video controls preload="metadata"><source src="vid11.mp4" type="video/mp4"></video><div class="label">Видео 11</div></div>
+            <div class="card"><video controls preload="metadata"><source src="vid12.mp4" type="video/mp4"></video><div class="label">Видео 12</div></div>
+            <div class="card"><video controls preload="metadata"><source src="vid13.mp4" type="video/mp4"></video><div class="label">Видео 13</div></div>
+            <div class="card"><video controls preload="metadata"><source src="vid14.mp4" type="video/mp4"></video><div class="label">Видео 14</div></div>
+            <div class="card"><video controls preload="metadata"><source src="vid15.mp4" type="video/mp4"></video><div class="label">Видео 15</div></div>
+            <div class="card"><video controls preload="metadata"><source src="vid17.mp4" type="video/mp4"></video><div class="label">Видео 17</div></div>
+            <div class="card"><video controls preload="metadata"><source src="vid18.mp4" type="video/mp4"></video><div class="label">Видео 18</div></div>
+            <div class="card"><video controls preload="metadata"><source src="vid19.mp4" type="video/mp4"></video><div class="label">Видео 19</div></div>
+            <div class="card"><video controls preload="metadata"><source src="vid20.mp4" type="video/mp4"></video><div class="label">Видео 20</div></div>
+        </div>
+
+        <footer>our memories❤️</footer>
+    </div>
+
+</body>
+</html>
