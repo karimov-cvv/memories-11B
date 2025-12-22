@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Наш Класс | Воспоминания</title>
+    <script>
+        // --- ПАРОЛЬ ---
+        // Замени '11Б' на свой пароль, если хочешь другой
+        var pass = '11Б'; 
+        
+        if (prompt('Введите пароль для доступа к архиву 11Б:') !== pass) {
+            alert('Доступ запрещен. Неверный пароль.');
+            document.documentElement.innerHTML = ''; 
+            window.stop();
+        }
+    </script>
+    <style>
+        body {
+            margin: 0;
+            background-color: #1a261a; /* Цвет школьной доски */
+            color: #e0e0e0;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            padding: 15px;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Фоновые фотографии (эффект разбросанных снимков) */
+        .bg-photo {
+            position: fixed;
+            z-index: -1;
+            opacity: 0.25;
+            width: 180px;
+            border: 5px solid #fff;
+            box-shadow: 5px 5px 15px rgba(0,0,0,0.5);
+            pointer-events: none;
+        }
+
+        /* Расставляем 6 фото по углам и сторонам */
+        .p1 { top: 5%; left: -30px; transform: rotate(-15deg); }
+        .p2 { top: 12%; right: -40px; transform: rotate(12deg); }
+        .p3 { top: 45%; left: -50px; transform: rotate(8deg); }
+        .p4 { bottom: 20%; right: -30px; transform: rotate(-10deg); }
+        .p5 { bottom: 5%; left: 10%; transform: rotate(-15deg); }
+        .p6 { top: 70%; right: 10%; transform: rotate(20deg); }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        header {
+            text-align: center;
+            margin: 30px 0;
+            border: 2px dashed #ffffff33;
+            padding: 20px;
+            border-radius: 20px;
+            background: rgba(0,0,0,0.3);
+            backdrop-filter: blur(5px);
+        }
+
+        h1 {
+            font-size: 2rem;
+            color: #fff;
+            text-shadow: 2px 2px 0px #333;
+            margin: 0;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .card {
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+        
+        video {
+            width: 100%;
+            display: block;
+            background: #000;
+        }
+
+        .label {
+            padding: 12px;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #a8cba8;
+            font-weight: bold;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 60px;
+            padding: 30px;
+            font-size: 0.8rem;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+
+    <img src="bg1.jpg" class="bg-photo p1">
+    <img src="bg2.jpg" class="bg-photo p2">
+    <img src="bg3.jpg" class="bg-photo p3">
+    <img src="bg4.jpg" class="bg-photo p4">
+    <img src="bg5.jpg" class="bg-photo p5">
+    <img src="bg6.jpg" class="bg-photo p6">
+
+    <div class="container">
+        <header>
+            <h1>🎓 Наш Школьный Альбом</h1>
+            <p>19 незабываемых моментов</p>
+        </header>
+
+        <div class="grid">
+            <div class="card"><video controls playsinline preload="metadata"><source src="vid1.mp4" type="video/mp4"></video><div class="label">Видео 1</div></div>
+            <div class="card"><video controls playsinline preload="metadata"><source src="vid2.mp4" type="video/mp4"></video><div class="label">Видео 2</div></div>
+            <div class="card"><video controls playsinline preload="metadata"><source src="vid3.mp4" type="video/mp4"></video><div class="label">Видео 3</div></div>
+            <div class="card"><video controls playsinline preload="metadata"><source src="vid4.mp4" type="video/mp4"></video><div class="label">Видео 4</div></div>
+            <div class="card"><video controls playsinline preload="metadata"><source src="vid5.mp4" type="video/mp4"></video><div class="label">Видео 5</div></div>
+            <div class="card"><video controls playsinline preload="metadata"><source src="vid6.mp4" type="video/mp4"></video><div class="label">Видео 6</div></div>
+            <div class="card"><video controls playsinline preload="metadata"><source src="vid7.mp4" type="video/mp4"></video><div class="label">Видео 7</div></div>
+            <div class="card"><video controls playsinline preload="metadata"><source src="vid8.mp4" type="video/mp4"></video><div class="label">Видео 8</div></div>
+            
+            <div class="card"><video controls playsinline preload="metadata"><source src="vid10.mp4" type="video/mp4"></video><div class="label">Видео 10</div></div>
+            <div class="card"><video controls playsinline preload="metadata"><source src="vid11.mp4" type="video/mp4"></video><div class="label">Видео 11</div></div>
+            <div class="card"><video controls playsinline preload="metadata"><source src="vid12.mp4" type="video/mp4"></video><div class="label">Видео 12</div></div>
+            <div class="card"><video controls playsinline preload="metadata"><source src="vid13.mp4" type="video/mp4"></video><div class="label">Видео 13</div></div>
+            <div class="card"><video controls playsinline preload="metadata"><source src="vid14.mp4" type="video/mp4"></video><div class="label">Видео 14</div></div>
+            <div class="card"><video controls playsinline preload="metadata"><source src="vid15.mp4" type="video/mp4"></video><div class="label">Видео 15</div></div>
+            <div class="card"><video controls playsinline preload="metadata"><source src="vid16.mp4" type="video/mp4"></video><div class="label">Видео 16</div></div>
+            <div class="card"><video controls playsinline preload="metadata"><source src="vid17.mp4" type="video/mp4"></video><div class="label">Видео 17</div></div>
+            <div class="card"><video controls playsinline preload="metadata"><source src="vid18.mp4" type="video/mp4"></video><div class="label">Видео 18</div></div>
+            <div class="card"><video controls playsinline preload="metadata"><source src="vid19.mp4" type="video/mp4"></video><div class="label">Видео 19</div></div>
+            <div class="card"><video controls playsinline preload="metadata"><source src="vid20.mp4" type="video/mp4"></video><div class="label">Видео 20</div></div>
+        </div>
+
+        <footer>
+            Сделано для 11Б. Школьные годы 2025.
+        </footer>
+    </div>
+
+</body>
+</html>
