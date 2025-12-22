@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Архив 11Б | Школа 300</title>
+    <script>
+        var pass = '300.11b'; 
+        if (prompt('Введите пароль для доступа к видео:') !== pass) {
+            alert('Доступ ограничен!');
+            document.documentElement.innerHTML = ''; 
+            window.stop();
+        }
+    </script>
+    <style>
+        body {
+            margin: 0;
+            background-color: #1a261a; 
+            color: #e0e0e0;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            padding: 10px;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Фоновые фото - ближе к центру */
+        .bg-photo {
+            position: fixed;
+            z-index: -1;
+            opacity: 0.25;
+            width: 160px;
+            border: 4px solid #fff;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            pointer-events: none;
+        }
+
+        .p2 { top: 15%; right: 10%; transform: rotate(10deg); }
+        .p3 { top: 40%; left: 8%; transform: rotate(-8deg); }
+        .p4 { bottom: 15%; right: 12%; transform: rotate(5deg); }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        header {
+            text-align: center;
+            margin: 15px 0;
+            border: 2px dashed #ffffff33;
+            padding: 15px;
+            border-radius: 15px;
+            background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(8px);
+        }
+
+        h1 { font-size: 1.5rem; color: #fff; margin: 0; text-shadow: 1px 1px 3px #000; }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+            gap: 12px;
+        }
+
+        .card {
+            background: rgba(0, 0, 0, 0.75);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        video {
+            width: 100%;
+            display: block;
+            background: #000;
+        }
+
+        .label {
+            padding: 6px;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #a8cba8;
+        }
+
+        footer { text-align: center; margin-top: 30px; padding: 20px; font-size: 0.7rem; opacity: 0.5; }
+    </style>
+</head>
+<body>
+
+    <img src="bg2.jpg" class="bg-photo p2">
+    <img src="bg3.jpg" class="bg-photo p3">
+    <img src="bg4.jpg" class="bg-photo p4">
+
+    <div class="container">
+        <header>
+            <h1>🎓 Школа 300 | 11"Б"</h1>
+            <p>Наш видеоархив</p>
+        </header>
+
+        <div class="grid">
+            <div class="card"><video controls playsinline preload="none"><source src="vid2.mp4" type="video/mp4"></video><div class="label">Момент 2</div></div>
+            <div class="card"><video controls playsinline preload="none"><source src="vid7.mp4" type="video/mp4"></video><div class="label">Момент 7</div></div>
+            <div class="card"><video controls playsinline preload="none"><source src="vid8.mp4" type="video/mp4"></video><div class="label">Момент 8</div></div>
+            <div class="card"><video controls playsinline preload="none"><source src="vid10.mp4" type="video/mp4"></video><div class="label">Момент 10</div></div>
+            <div class="card"><video controls playsinline preload="none"><source src="vid11.mp4" type="video/mp4"></video><div class="label">Момент 11</div></div>
+            <div class="card"><video controls playsinline preload="none"><source src="vid12.mp4" type="video/mp4"></video><div class="label">Момент 12</div></div>
+            <div class="card"><video controls playsinline preload="none"><source src="vid13.mp4" type="video/mp4"></video><div class="label">Момент 13</div></div>
+            <div class="card"><video controls playsinline preload="none"><source src="vid14.mp4" type="video/mp4"></video><div class="label">Момент 14</div></div>
+            <div class="card"><video controls playsinline preload="none"><source src="vid15.mp4" type="video/mp4"></video><div class="label">Момент 15</div></div>
+            <div class="card"><video controls playsinline preload="none"><source src="vid17.mp4" type="video/mp4"></video><div class="label">Момент 17</div></div>
+            <div class="card"><video controls playsinline preload="none"><source src="vid18.mp4" type="video/mp4"></video><div class="label">Момент 18</div></div>
+            <div class="card"><video controls playsinline preload="none"><source src="vid19.mp4" type="video/mp4"></video><div class="label">Момент 19</div></div>
+            <div class="card"><video controls playsinline preload="none"><source src="vid20.mp4" type="video/mp4"></video><div class="label">Момент 20</div></div>
+        </div>
+
+        <footer>Для своих ❤️ 2025</footer>
+    </div>
+
+</body>
+</html>
