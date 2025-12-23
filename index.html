@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>archive 11B | memories album </title>
+    <script>
+        // --- НОВЫЙ ПАРОЛЬ ---
+        var pass = 'greenflagbek'; 
+        
+        if (prompt('Введите пароль:') !== pass) {
+            // Если пароль неверный, показываем ошибку и блокируем сайт
+            document.write('<body style="background:#f5ebe0;color:#4e3b31;text-align:center;padding-top:100px;font-family:sans-serif;"><h1>❌ Ошибка доступа</h1><p>Обновите страницу и попробуйте снова.</p></body>');
+            window.stop();
+        }
+    </script>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background-color: #f5ebe0; /* Молочный цвет */
+            overflow: hidden;
+        }
+
+        /* Контейнер для прокрутки TikTok */
+        .tiktok-container {
+            height: 100vh;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
+        }
+
+        /* Каждая секция с видео */
+        .video-section {
+            height: 100vh;
+            width: 100%;
+            scroll-snap-align: start;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            /* Градиент от молочного к белому */
+            background: linear-gradient(180deg, #f5ebe0 0%, #ffffff 100%);
+        }
+
+        video {
+            max-width: 90%;
+            max-height: 75vh;
+            border: 8px solid #fff; /* Белая рамка как у фото */
+            box-shadow: 0 10px 30px rgba(78, 59, 49, 0.2);
+            z-index: 2;
+            border-radius: 5px;
+            background: #000;
+        }
+
+        /* Подпись к видео */
+        .video-label {
+            position: absolute;
+            bottom: 40px;
+            left: 20px;
+            color: #4e3b31; /* Темно-коричневый текст */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            z-index: 3;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 12px 20px;
+            border-radius: 15px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(78, 59, 49, 0.1);
+        }
+
+        /* Фоновые фото */
+        .bg-photo {
+            position: fixed;
+            z-index: 1;
+            opacity: 0.4; 
+            width: 150px;
+            border: 5px solid #fff;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            pointer-events: none;
+        }
+        .p2 { top: 10%; right: 5%; transform: rotate(8deg); }
+        .p3 { top: 40%; left: 5%; transform: rotate(-10deg); }
+        .p4 { bottom: 10%; right: 8%; transform: rotate(5deg); }
+
+        .header-slide {
+            position: absolute;
+            top: 30px;
+            width: 100%;
+            text-align: center;
+            color: #4e3b31;
+            z-index: 3;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        
+        h2 { margin: 0; font-weight: 300; letter-spacing: 2px; }
+    </style>
+</head>
+<body>
+
+    <img src="bg2.jpg" class="bg-photo p2">
+    <img src="bg3.jpg" class="bg-photo p3">
+    <img src="bg4.jpg" class="bg-photo p4">
+
+    <div class="tiktok-container">
+
+        <div class="video-section">
+            <div class="header-slide"><h2>ШКОЛА 300 | 11"Б"</h2><p>листайте вниз</p></div>
+            <video controls playsinline preload="metadata"><source src="vid2.mp4" type="video/mp4"></video>
+            <div class="video-label"><b>Воспоминание 2</b></div>
+        </div>
+
+        <div class="video-section">
+            <video controls playsinline preload="metadata"><source src="vid7.mp4" type="video/mp4"></video>
+            <div class="video-label"><b>Воспоминание 7</b></div>
+        </div>
+
+        <div class="video-section">
+            <video controls playsinline preload="metadata"><source src="vid8.mp4" type="video/mp4"></video>
+            <div class="video-label"><b>Воспоминание 8</b></div>
+        </div>
+
+        <div class="video-section">
+            <video controls playsinline preload="metadata"><source src="vid10.mp4" type="video/mp4"></video>
+            <div class="video-label"><b>Воспоминание 10</b></div>
+        </div>
+
+        <div class="video-section">
+            <video controls playsinline preload="metadata"><source src="vid11.mp4" type="video/mp4"></video>
+            <div class="video-label"><b>Воспоминание 11</b></div>
+        </div>
+
+        <div class="video-section">
+            <video controls playsinline preload="metadata"><source src="vid12.mp4" type="video/mp4"></video>
+            <div class="video-label"><b>Воспоминание 12</b></div>
+        </div>
+
+        <div class="video-section">
+            <video controls playsinline preload="metadata"><source src="vid13.mp4" type="video/mp4"></video>
+            <div class="video-label"><b>Воспоминание 13</b></div>
+        </div>
+
+        <div class="video-section">
+            <video controls playsinline preload="metadata"><source src="vid14.mp4" type="video/mp4"></video>
+            <div class="video-label"><b>Воспоминание 14</b></div>
+        </div>
+
+        <div class="video-section">
+            <video controls playsinline preload="metadata"><source src="vid15.mp4" type="video/mp4"></video>
+            <div class="video-label"><b>Воспоминание 15</b></div>
+        </div>
+
+        <div class="video-section">
+            <video controls playsinline preload="metadata"><source src="vid17.mp4" type="video/mp4"></video>
+            <div class="video-label"><b>Воспоминание 17</b></div>
+        </div>
+
+        <div class="video-section">
+            <video controls playsinline preload="metadata"><source src="vid18.mp4" type="video/mp4"></video>
+            <div class="video-label"><b>Воспоминание 18</b></div>
+        </div>
+
+        <div class="video-section">
+            <video controls playsinline preload="metadata"><source src="vid19.mp4" type="video/mp4"></video>
+            <div class="video-label"><b>Воспоминание 19</b></div>
+        </div>
+
+        <div class="video-section">
+            <video controls playsinline preload="metadata"><source src="vid20.mp4" type="video/mp4"></video>
+            <div class="video-label"><b>Воспоминание 20</b></div>
+        </div>
+
+    </div>
+
+</body>
+</html>
