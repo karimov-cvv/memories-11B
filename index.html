@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Archive 11B | Instagram Edition</title>
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+    <style>
+        :root { --insta-red: #ff3040; --insta-blue: #0095f6; --bg: #000; }
+        html, body { margin: 0; padding: 0; height: 100%; background: #000; color: white; font-family: -apple-system, sans-serif; overflow: hidden; }
+        
+        .tiktok-container { height: 100vh; overflow-y: scroll; scroll-snap-type: y mandatory; -webkit-overflow-scrolling: touch; }
+        .section { height: 100vh; width: 100%; scroll-snap-align: start; scroll-snap-stop: always; position: relative; display: flex; align-items: center; justify-content: center; }
+        
+        .media-wrapper { width: 100%; height: 100%; position: relative; background: #000; display: flex; align-items: center; justify-content: center; }
+        video, img { width: 100%; height: 100%; object-fit: contain; } 
+
+        .side-actions { position: absolute; right: 15px; bottom: 180px; display: flex; flex-direction: column; align-items: center; gap: 22px; z-index: 10; }
+        .icon-svg { width: 34px; height: 34px; fill: white; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.5)); transition: 0.2s; }
+        .heart-icon { fill: none; stroke: white; stroke-width: 2.5; }
+        .heart-icon.active { fill: var(--insta-red); stroke: var(--insta-red); transform: scale(1.2); }
+
+        .ui-overlay { 
+            position: absolute; bottom: 60px; left: 0; width: 100%; padding: 0 20px; 
+            background: linear-gradient(transparent, rgba(0,0,0,0.8) 40%); z-index: 5; box-sizing: border-box;
+        }
+        
+        .user-info { font-weight: 700; font-size: 15px; margin-bottom: 12px; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
+        .comment-list { max-height: 85px; overflow-y: auto; font-size: 13px; margin-bottom: 12px; opacity: 0.9; }
+        .comment-item { margin-bottom: 4px; }
+
+        .input-row { display: flex; gap: 12px; align-items: center; background: rgba(255,255,255,0.1); padding: 6px 15px; border-radius: 25px; border: 0.5px solid rgba(255,255,255,0.2); }
+        .inp-text { background: transparent; border: none; color: white; flex-grow: 1; outline: none; padding: 8px 0; font-size: 14px; }
+        .post-btn { background: none; border: none; color: var(--insta-blue); font-weight: 700; cursor: pointer; }
+
+        #auth-screen { position: fixed; inset: 0; background: #000; z-index: 1000; display: flex; align-items: center; justify-content: center; }
+        .auth-box { text-align: center; }
+        .auth-box input { display: block; width: 260px; padding: 14px; margin: 10px auto; border-radius: 8px; border: 1px solid #333; background: #121212; color: white; }
+        .auth-btn { width: 100%; padding: 12px; background: var(--insta-blue); color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div id="auth-screen">
+    <div class="auth-box">
+        <h2 style="font-style: italic; margin-bottom: 25px;">Instagram</h2>
+        <input type="text" id="login-name" placeholder="Имя">
+        <input type="password" id="login-pass" placeholder="Пароль">
+        <button class="auth-btn" onclick="checkAuth()">Войти</button>
+        <p id="error-msg" style="color:red; font-size:12px; margin-top:10px;"></p>
+    </div>
+</div>
+
+<div class="tiktok-container" id="main-container" style="display:none;"></div>
+
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyC6VJneixoX29fkyAkB8Xn784fC-f6X36U",
+        authDomain: "archive-11b.firebaseapp.com",
+        databaseURL: "https://archive-11b-default-rtdb.firebaseio.com",
+        projectId: "archive-11b",
+        storageBucket: "archive-11b.firebasestorage.app",
+        messagingSenderId: "133107956700",
+        appId: "1:133107956700:web:7f4d682490df09b5784f1a"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+
+    const validUsers = ["istora", "durdona", "samira", "abdurahmon", "otabek", "abduazim"];
+    const universalPass = "ourclass11b";
+
+    let currentUser = localStorage.getItem('chat_user') || null;
+    let globalMuted = true;
+
+    function checkAuth() {
+        const name = document.getElementById('login-name').value.trim().toLowerCase();
+        const pass = document.getElementById('login-pass').value.trim();
+        const err = document.getElementById('error-msg');
+        if (validUsers.includes(name) && pass === universalPass) {
+            currentUser = name;
+            localStorage.setItem('chat_user', name);
+            location.reload();
+        } else {
+            err.innerText = "Неверное имя или пароль";
+        }
+    }
+
+    if (currentUser) {
+        document.getElementById('auth-screen').style.display = 'none';
+        document.getElementById('main-container').style.display = 'block';
+        initSite();
+    }
+
+    function initSite() {
+        const contentList = [
+            {id:"2",t:"video"},{id:"7",t:"video"},{id:"8",t:"video"},{id:"10",t:"video"},
+            {id:"11",t:"video"},{id:"12",t:"video"},{id:"13",t:"video"},{id:"14",t:"video"},
+            {id:"15",t:"video"},{id:"17",t:"video"},{id:"18",t:"video"},{id:"19",t:"video"},
+            {id:"20",t:"video"},{id:"21",t:"video"},{id:"22",t:"video"},{id:"23",t:"video"},
+            {id:"24",t:"video"},{id:"25",t:"video"},
+            {id:"1",t:"image"},{id:"2",t:"image"},{id:"3",t:"image"},{id:"4",t:"image"},
+            {id:"5",t:"image"},{id:"6",t:"image"},{id:"7",t:"image"},{id:"8",t:"image"},
+            {id:"9",t:"image"},{id:"10",t:"image"},{id:"11",t:"image"},{id:"12",t:"image"}
+        ];
+
+        const container = document.getElementById('main-container');
+        contentList.forEach(item => {
+            const section = document.createElement('div');
+            section.className = 'section';
+            const heartSvg = `<svg class="icon-svg heart-icon" id="heart-${item.t}${item.id}" viewBox="0 0 24 24"><path d="M16.792 3.904A4.989 4.989 0 0 1 21.5 9.122c0 3.072-2.652 4.956-5.197 7.222-2.512 2.243-3.865 3.469-4.303 3.752-.477-.309-2.143-1.823-4.303-3.752C5.141 14.072 2.5 12.167 2.5 9.122a4.989 4.989 0 0 1 4.708-5.218 4.21 4.21 0 0 1 3.675 1.941c.84 1.175.98 1.763 1.12 1.763s.278-.588 1.11-1.766a4.17 4.17 0 0 1 3.679-1.938z"/></svg>`;
+            
+            section.innerHTML = `
+                <div class="media-wrapper" ondblclick="addLike('${item.t}${item.id}')">
+                    ${item.t==='video'?`<video loop playsinline muted data-src="vid${item.id}.mp4"></video>`:`<img data-src="img${item.id}.jpg">`}
+                </div>
+                <div class="side-actions">
+                    <div class="action-item" onclick="addLike('${item.t}${item.id}')">
+                        ${heartSvg}
+                        <span style="font-size:12px;font-weight:bold;margin-top:5px;" id="likes-${item.t}${item.id}">0</span>
+                    </div>
+                    ${item.t==='video'?`<div onclick="toggleGlobalSound()"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77zm-4 0h-2.5l-5 5H2v6.5h2.5l5 5V3.23z"/></svg></div>`:''}
+                </div>
+                <div class="ui-overlay">
+                    <div class="user-info">@${currentUser}</div>
+                    <div class="comment-list" id="list-${item.t}${item.id}"></div>
+                    <div class="input-row">
+                        <input type="text" id="text-${item.t}${item.id}" class="inp-text" placeholder="Добавить комментарий...">
+                        <button class="post-btn" onclick="sendComment('${item.t}${item.id}')">Post</button>
+                    </div>
+                </div>`;
+            container.appendChild(section);
+            loadComments(item.t+item.id);
+            loadLikes(item.t+item.id);
+        });
+        startObserver();
+    }
+
+    function toggleGlobalSound() {
+        globalMuted = !globalMuted;
+        document.querySelectorAll('video').forEach(v => v.muted = globalMuted);
+    }
+
+    function startObserver() {
+        const obs = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                const v = e.target.querySelector('video'), m = e.target.querySelector('video, img');
+                if (e.isIntersecting) {
+                    if (m.dataset.src) { m.src = m.dataset.src; delete m.dataset.src; }
+                    if (v) { v.muted = globalMuted; v.play().catch(()=>{}); }
+                } else if (v) { v.pause(); }
+            });
+        }, { threshold: 0.6 });
+        document.querySelectorAll('.section').forEach(s => obs.observe(s));
+    }
+
+    function addLike(id) {
+        if (localStorage.getItem('liked_'+id)) return;
+        database.ref('likes/'+id).transaction(c => (c||0)+1);
+        localStorage.setItem('liked_'+id, 'true');
+        document.getElementById('heart-'+id).classList.add('active');
+    }
+
+    function loadLikes(id) {
+        if (localStorage.getItem('liked_'+id)) document.getElementById('heart-'+id).classList.add('active');
+        database.ref('likes/'+id).on('value', s => { document.getElementById('likes-'+id).innerText = s.val()||0; });
+    }
+
+    function sendComment(id) {
+        const t = document.getElementById('text-'+id);
+        if(t.value.trim()) { database.ref('comments/'+id).push({name: currentUser, text: t.value.trim()}); t.value = ""; }
+    }
+
+    function loadComments(id) {
+        database.ref('comments/'+id).on('value', s => {
+            const l = document.getElementById('list-'+id); l.innerHTML = "";
+            if(s.val()) Object.values(s.val()).forEach(c => { l.innerHTML += `<div class="comment-item"><b>${c.name}</b> ${c.text}</div>`; });
+            l.scrollTop = l.scrollHeight;
+        });
+    }
+</script>
+</body>
+</html>
