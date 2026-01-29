@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Архив 11Б | Our Class</title>
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+    <style>
+        :root { --accent: #fe2c55; --bg: #000; }
+        html, body { margin: 0; padding: 0; height: 100%; background: var(--bg); color: white; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; overflow: hidden; }
+
+        /* ЭКРАН ВХОДА */
+        #auth-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 1000; display: flex; align-items: center; justify-content: center;
+        }
+        .auth-box { width: 85%; max-width: 320px; text-align: center; }
+        .auth-box h2 { font-size: 28px; margin-bottom: 30px; letter-spacing: 2px; }
+        .auth-box input { width: 100%; padding: 15px; margin-bottom: 12px; border-radius: 10px; border: 1px solid #333; background: #111; color: white; box-sizing: border-box; font-size: 16px; }
+        .auth-btn { width: 100%; padding: 15px; border-radius: 10px; border: none; background: var(--accent); color: white; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.3s; }
+        .auth-btn:active { transform: scale(0.95); }
+
+        /* КОНТЕЙНЕР */
+        .tiktok-container { height: 100vh; overflow-y: scroll; scroll-snap-type: y mandatory; display: none; -webkit-overflow-scrolling: touch; }
+        .section { height: 100vh; width: 100%; scroll-snap-align: start; scroll-snap-stop: always; position: relative; display: flex; align-items: center; justify-content: center; }
+
+        /* МЕДИА */
+        .media-wrapper {
+            width: 88%; height: 62vh;
+            display: flex; justify-content: center; align-items: center;
+            z-index: 1; border-radius: 20px; overflow: hidden;
+            background: #111; box-shadow: 0 0 30px rgba(255,44,85,0.1);
+        }
+        video, img { width: 100%; height: 100%; object-fit: contain; }
+
+        /* ЛАЙК СПРАВА */
+        .side-bar {
+            position: absolute; right: 12px; top: 38%; 
+            display: flex; flex-direction: column; align-items: center; gap: 15px; z-index: 10;
+        }
+        .like-btn { background: none; border: none; font-size: 38px; cursor: pointer; filter: grayscale(1); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); padding: 0; }
+        .like-btn.active { filter: grayscale(0); transform: scale(1.1); }
+        .like-count { font-size: 13px; font-weight: bold; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+
+        /* НИЖНИЙ ИНТЕРФЕЙС */
+        .ui-overlay {
+            position: absolute; bottom: 0; left: 0; width: 100%; padding: 25px 20px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.95)); z-index: 5; box-sizing: border-box;
+        }
+        .user-tag { font-size: 15px; font-weight: 700; margin-bottom: 10px; color: #fff; }
+        .comment-list { max-height: 90px; overflow-y: auto; font-size: 14px; margin-bottom: 15px; line-height: 1.4; color: #eee; }
+        .comment-item { margin-bottom: 4px; }
+        .comment-item b { color: var(--accent); margin-right: 5px; }
+        
+        .input-row { display: flex; gap: 10px; align-items: center; }
+        .inp-text { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1); border-radius: 25px; padding: 12px 18px; color: white; flex-grow: 1; font-size: 14px; outline: none; }
+        .send-btn { background: var(--accent); color: white; border: none; width: 42px; height: 42px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+    </style>
+</head>
+<body>
+
+<div id="auth-screen">
+    <div class="auth-box">
+        <h2>АРХИВ 11Б</h2>
+        <input type="text" id="reg-nick" placeholder="Имя пользователя">
+        <input type="password" id="reg-pass" placeholder="Пароль">
+        <button class="auth-btn" onclick="handleAuth()">ВОЙТИ</button>
+        <p id="error-msg" style="color:var(--accent); font-size: 12px; margin-top: 10px;"></p>
+    </div>
+</div>
+
+<div class="tiktok-container" id="main-container"></div>
+
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyC6VJneixoX29fkyAkB8Xn784fC-f6X36U",
+        authDomain: "archive-11b.firebaseapp.com",
+        databaseURL: "https://archive-11b-default-rtdb.firebaseio.com",
+        projectId: "archive-11b",
+        storageBucket: "archive-11b.firebasestorage.app",
+        messagingSenderId: "133107956700",
+        appId: "1:133107956700:web:7f4d682490df09b5784f1a"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+
+    const preRegisteredUsers = ["istora", "durdona", "samira", "abdurahmon", "otabek", "abduazim"];
+    const commonPass = "ourclass11b";
+
+    let currentUser = localStorage.getItem('chat_user') || null;
+
+    function handleAuth() {
+        const nick = document.getElementById('reg-nick').value.trim().toLowerCase();
+        const pass = document.getElementById('reg-pass').value.trim();
+        const error = document.getElementById('error-msg');
+
+        if (!nick || !pass) { error.innerText = "Заполни все поля!"; return; }
+
+        database.ref('users/' + nick).once('value', (s) => {
+            const userData = s.val();
+            if (userData) {
+                if (userData.password === pass) { login(nick); } 
+                else { error.innerText = "Неверный пароль!"; }
+            } else {
+                // Если ника нет, но он в списке разрешенных или просто новый
+                database.ref('users/' + nick).set({ password: pass }).then(() => login(nick));
+            }
+        });
+    }
+
+    function login(nick) {
+        currentUser = nick;
+        localStorage.setItem('chat_user', nick);
+        document.getElementById('auth-screen').style.display = 'none';
+        document.getElementById('main-container').style.display = 'block';
+        initSite();
+    }
+
+    if (currentUser) {
+        document.getElementById('auth-screen').style.display = 'none';
+        document.getElementById('main-container').style.display = 'block';
+        setTimeout(initSite, 100);
+    }
+
+    function initSite() {
+        // Создание пользователей в базе при первом запуске (если их нет)
+        preRegisteredUsers.forEach(u => {
+            database.ref('users/' + u).once('value', s => {
+                if(!s.exists()) database.ref('users/' + u).set({password: commonPass});
+            });
+        });
+
+        const contentList = [
+            { id: "2", type: "video" }, { id: "7", type: "video" }, { id: "8", type: "video" }, { id: "10", type: "video" }, 
+            { id: "11", type: "video" }, { id: "12", type: "video" }, { id: "13", type: "video" }, { id: "14", type: "video" }, 
+            { id: "15", type: "video" }, { id: "17", type: "video" }, { id: "18", type: "video" }, { id: "19", type: "video" }, 
+            { id: "20", type: "video" }, { id: "21", type: "video" }, { id: "22", type: "video" }, { id: "23", type: "video" }, 
+            { id: "24", type: "video" },
+            { id: "1", type: "image" }, { id: "2", type: "image" }, { id: "3", type: "image" }, { id: "4", type: "image" }, 
+            { id: "5", type: "image" }, { id: "6", type: "image" }, { id: "7", type: "image" }, { id: "8", type: "image" }, 
+            { id: "9", type: "image" }, { id: "10", type: "image" }, { id: "11", type: "image" }, { id: "12", type: "image" }
+        ];
+
+        const container = document.getElementById('main-container');
+        container.innerHTML = "";
+        contentList.forEach(item => {
+            const section = document.createElement('div');
+            section.className = 'section';
+            let mediaHtml = item.type === 'video' 
+                ? `<video loop playsinline data-src="vid${item.id}.mp4"></video>` 
+                : `<img data-src="img${item.id}.jpg">`;
+
+            section.innerHTML = `
+                <div class="media-wrapper">${mediaHtml}</div>
+                <div class="side-bar">
+                    <button class="like-btn" id="btn-${item.type}${item.id}" onclick="addLike('${item.type}${item.id}')">❤️</button>
+                    <span class="like-count" id="likes-${item.type}${item.id}">0</span>
+                </div>
+                <div class="ui-overlay">
+                    <div class="user-tag">@${currentUser}</div>
+                    <div class="comment-list" id="list-${item.type}${item.id}"></div>
+                    <div class="input-row">
+                        <input type="text" id="text-${item.type}${item.id}" class="inp-text" placeholder="Добавить комментарий...">
+                        <button class="send-btn" onclick="sendComment('${item.type}${item.id}')">↗️</button>
+                    </div>
+                </div>
+            `;
+            container.appendChild(section);
+            loadComments(item.type + item.id);
+            loadLikes(item.type + item.id);
+        });
+        startObserver();
+    }
+
+    function startObserver() {
+        const obs = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                const m = e.target.querySelector('video, img');
+                if (e.isIntersecting) {
+                    if (m.dataset.src) { m.src = m.dataset.src; delete m.dataset.src; }
+                    if (m.tagName === 'VIDEO') {
+                        m.play().catch(() => { m.muted = true; m.play(); });
+                    }
+                } else {
+                    if (m.tagName === 'VIDEO') m.pause();
+                }
+            });
+        }, { threshold: 0.6 });
+        document.querySelectorAll('.section').forEach(s => obs.observe(s));
+    }
+
+    function sendComment(id) {
+        const t = document.getElementById('text-'+id);
+        if(!t.value.trim()) return;
+        database.ref('comments/'+id).push({ name: currentUser, text: t.value.trim() });
+        t.value = "";
+    }
+
+    function loadComments(id) {
+        database.ref('comments/'+id).on('value', s => {
+            const l = document.getElementById('list-'+id);
+            l.innerHTML = "";
+            if(s.val()) Object.values(s.val()).forEach(c => {
+                l.innerHTML += `<div class="comment-item"><b>${c.name}</b> ${c.text}</div>`;
+            });
+            l.scrollTop = l.scrollHeight;
+        });
+    }
+
+    function addLike(id) {
+        if (localStorage.getItem('liked_'+id)) return;
+        database.ref('likes/'+id).transaction(c => (c||0)+1);
+        localStorage.setItem('liked_'+id, 'true');
+        document.getElementById('btn-'+id).classList.add('active');
+    }
+
+    function loadLikes(id) {
+        if (localStorage.getItem('liked_'+id)) {
+            const btn = document.getElementById('btn-'+id);
+            if(btn) btn.classList.add('active');
+        }
+        database.ref('likes/'+id).on('value', s => {
+            const count = document.getElementById('likes-'+id);
+            if(count) count.innerText = s.val()||0;
+        });
+    }
+</script>
+</body>
+</html>
