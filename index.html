@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Архив 11Б | Instagram Style</title>
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+    <style>
+        :root { --insta-red: #ff3040; --glass: rgba(0,0,0,0.6); }
+        html, body { margin: 0; padding: 0; height: 100%; background: #000; color: white; font-family: -apple-system, system-ui, sans-serif; overflow: hidden; }
+
+        .tiktok-container { height: 100vh; overflow-y: scroll; scroll-snap-type: y mandatory; -webkit-overflow-scrolling: touch; }
+        .section { height: 100vh; width: 100%; scroll-snap-align: start; position: relative; display: flex; align-items: center; justify-content: center; }
+
+        .media-wrapper { width: 90%; height: 65vh; border-radius: 15px; overflow: hidden; position: relative; background: #111; }
+        video, img { width: 100%; height: 100%; object-fit: contain; }
+
+        /* ПРАВАЯ ПАНЕЛЬ КНОПОК */
+        .side-actions {
+            position: absolute; right: 15px; top: 50%; transform: translateY(-50%);
+            display: flex; flex-direction: column; align-items: center; gap: 25px; z-index: 10;
+        }
+
+        .action-item { display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; }
+        
+        /* ИКОНКА ЛАЙКА (SVG) */
+        .heart-icon { width: 32px; height: 32px; fill: none; stroke: white; stroke-width: 2; transition: 0.2s cubic-bezier(0.17, 0.89, 0.32, 1.49); }
+        .heart-icon.active { fill: var(--insta-red); stroke: var(--insta-red); transform: scale(1.1); }
+        
+        /* ИКОНКА ЗВУКА (SVG) */
+        .sound-icon { width: 28px; height: 28px; fill: white; }
+
+        .action-count { font-size: 12px; font-weight: 600; text-shadow: 0 1px 4px rgba(0,0,0,0.8); }
+
+        .ui-overlay {
+            position: absolute; bottom: 0; left: 0; width: 100%; padding: 25px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.8)); z-index: 5;
+        }
+        .user-info { font-weight: 700; font-size: 15px; margin-bottom: 10px; }
+        .comment-list { max-height: 80px; overflow-y: auto; font-size: 13px; margin-bottom: 15px; opacity: 0.9; }
+        .input-row { display: flex; gap: 10px; }
+        .inp-text { background: rgba(255,255,255,0.1); border: 0.5px solid rgba(255,255,255,0.2); border-radius: 20px; padding: 10px 15px; color: white; flex-grow: 1; outline: none; font-size: 14px; }
+        
+        #auth-screen { position: fixed; inset: 0; background: #000; z-index: 1000; display: flex; align-items: center; justify-content: center; text-align: center; }
+        .auth-box input { display: block; width: 250px; padding: 12px; margin: 10px auto; border-radius: 8px; border: none; background: #262626; color: white; }
+        .auth-btn { background: #0095f6; color: white; border: none; padding: 10px 40px; border-radius: 8px; font-weight: 700; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div id="auth-screen">
+    <div class="auth-box">
+        <h2 style="font-style: italic;">Instagram Style Архив</h2>
+        <input type="text" id="reg-nick" placeholder="Имя">
+        <input type="password" id="reg-pass" placeholder="Пароль">
+        <button class="auth-btn" onclick="handleAuth()">Войти</button>
+    </div>
+</div>
+
+<div class="tiktok-container" id="main-container"></div>
+
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyC6VJneixoX29fkyAkB8Xn784fC-f6X36U",
+        authDomain: "archive-11b.firebaseapp.com",
+        databaseURL: "https://archive-11b-default-rtdb.firebaseio.com",
+        projectId: "archive-11b",
+        storageBucket: "archive-11b.firebasestorage.app",
+        messagingSenderId: "133107956700",
+        appId: "1:133107956700:web:7f4d682490df09b5784f1a"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+
+    let currentUser = localStorage.getItem('chat_user') || null;
+    let globalMuted = true; // Глобальное состояние звука
+
+    function handleAuth() {
+        const nick = document.getElementById('reg-nick').value.trim().toLowerCase();
+        const pass = document.getElementById('reg-pass').value.trim();
+        if(nick && pass) {
+            database.ref('users/'+nick).set({password: pass}).then(() => {
+                currentUser = nick; localStorage.setItem('chat_user', nick);
+                location.reload();
+            });
+        }
+    }
+
+    if(currentUser) {
+        document.getElementById('auth-screen').style.display = 'none';
+        initSite();
+    }
+
+    function initSite() {
+        const contentList = [
+            { id: "2", type: "video" }, { id: "7", type: "video" }, { id: "8", type: "video" }, 
+            { id: "1", type: "image" }, { id: "2", type: "image" } 
+            // ... добавь остальные ID из прошлых кодов
+        ];
+
+        const container = document.getElementById('main-container');
+        contentList.forEach(item => {
+            const section = document.createElement('div');
+            section.className = 'section';
+            section.innerHTML = `
+                <div class="media-wrapper">
+                    ${item.type === 'video' ? `<video loop playsinline muted data-src="vid${item.id}.mp4"></video>` : `<img data-src="img${item.id}.jpg">`}
+                </div>
+                <div class="side-actions">
+                    <div class="action-item" onclick="addLike('${item.type}${item.id}')">
+                        <svg class="heart-icon" id="heart-${item.type}${item.id}" viewBox="0 0 32 32">
+                            <path d="M16 28.5L14.1 26.7C7.3 20.6 2 15.8 2 10.1C2 5.4 5.7 1.7 10.4 1.7C13 1.7 15.5 2.9 17.2 4.9C18.9 2.9 21.4 1.7 24 1.7C28.7 1.7 32.4 5.4 32.4 10.1C32.4 15.8 27.1 20.6 20.3 26.7L16 28.5Z"/>
+                        </svg>
+                        <span class="action-count" id="likes-${item.type}${item.id}">0</span>
+                    </div>
+                    ${item.type === 'video' ? `
+                    <div class="action-item" onclick="toggleGlobalSound()">
+                        <svg class="sound-icon" viewBox="0 0 24 24">
+                            <path id="sound-path" d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/>
+                        </svg>
+                    </div>` : ''}
+                </div>
+                <div class="ui-overlay">
+                    <div class="user-info">@${currentUser}</div>
+                    <div class="comment-list" id="list-${item.type}${item.id}"></div>
+                    <div class="input-row">
+                        <input type="text" id="text-${item.type}${item.id}" class="inp-text" placeholder="Добавьте комментарий...">
+                        <button style="background:none; border:none; color:#0095f6; font-weight:700;" onclick="sendComment('${item.type}${item.id}')">Опубликовать</button>
+                    </div>
+                </div>
+            `;
+            container.appendChild(section);
+            loadComments(item.type + item.id);
+            loadLikes(item.type + item.id);
+        });
+        startObserver();
+    }
+
+    function toggleGlobalSound() {
+        globalMuted = !globalMuted;
+        document.querySelectorAll('video').forEach(v => v.muted = globalMuted);
+        // Обновляем иконку (упрощенно: просто меняем прозрачность)
+        document.querySelectorAll('.sound-icon').forEach(i => i.style.opacity = globalMuted ? "0.5" : "1");
+    }
+
+    function startObserver() {
+        const obs = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                const v = e.target.querySelector('video');
+                const m = e.target.querySelector('video, img');
+                if (e.isIntersecting) {
+                    if (m.dataset.src) { m.src = m.dataset.src; delete m.dataset.src; }
+                    if (v) { v.muted = globalMuted; v.play().catch(()=>{}); }
+                } else if (v) { v.pause(); }
+            });
+        }, { threshold: 0.6 });
+        document.querySelectorAll('.section').forEach(s => obs.observe(s));
+    }
+
+    function addLike(id) {
+        if (localStorage.getItem('liked_'+id)) return;
+        database.ref('likes/'+id).transaction(c => (c||0)+1);
+        localStorage.setItem('liked_'+id, 'true');
+        document.getElementById('heart-'+id).classList.add('active');
+    }
+
+    function loadLikes(id) {
+        if (localStorage.getItem('liked_'+id)) document.getElementById('heart-'+id).classList.add('active');
+        database.ref('likes/'+id).on('value', s => {
+            document.getElementById('likes-'+id).innerText = s.val()||0;
+        });
+    }
+
+    function sendComment(id) {
+        const t = document.getElementById('text-'+id);
+        if(t.value.trim()) {
+            database.ref('comments/'+id).push({name: currentUser, text: t.value.trim()});
+            t.value = "";
+        }
+    }
+
+    function loadComments(id) {
+        database.ref('comments/'+id).on('value', s => {
+            const l = document.getElementById('list-'+id); l.innerHTML = "";
+            if(s.val()) Object.values(s.val()).forEach(c => {
+                l.innerHTML += `<div><b>${c.name}</b> ${c.text}</div>`;
+            });
+            l.scrollTop = l.scrollHeight;
+        });
+    }
+</script>
+</body>
+</html>
