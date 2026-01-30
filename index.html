@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Archive 11B</title>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <style>
+        :root { --insta-red: #ff3040; --insta-blue: #0095f6; }
+        body { margin: 0; background: #000; color: white; font-family: -apple-system, sans-serif; overflow: hidden; }
+        .tiktok-container { height: 100vh; overflow-y: scroll; scroll-snap-type: y mandatory; }
+        .section { height: 100vh; scroll-snap-align: start; position: relative; display: flex; align-items: center; justify-content: center; }
+        video, img { width: 100%; height: 100%; object-fit: contain; }
+        .side-actions { position: absolute; right: 15px; bottom: 180px; display: flex; flex-direction: column; align-items: center; gap: 20px; z-index: 10; }
+        .icon-svg { width: 34px; height: 34px; fill: white; }
+        .ui-overlay { position: absolute; bottom: 60px; left: 0; width: 100%; padding: 0 20px; z-index: 5; }
+        .input-row { display: flex; gap: 10px; background: rgba(255,255,255,0.1); padding: 8px 15px; border-radius: 25px; }
+        .inp-text { background: transparent; border: none; color: white; flex-grow: 1; outline: none; }
+        #auth-screen { position: fixed; inset: 0; background: #000; z-index: 1000; display: flex; align-items: center; justify-content: center; }
+        .auth-box input { display: block; width: 250px; padding: 12px; margin: 10px; background: #121212; color: white; border: 1px solid #333; border-radius: 8px; }
+        .auth-btn { width: 100%; padding: 12px; background: var(--insta-blue); color: white; border: none; border-radius: 8px; font-weight: 700; }
+    </style>
+</head>
+<body>
+
+<div id="auth-screen">
+    <div class="auth-box">
+        <input type="text" id="login-name" placeholder="Имя">
+        <input type="password" id="login-pass" placeholder="Пароль">
+        <button class="auth-btn" onclick="checkAuth()">Войти</button>
+        <p id="error-msg" style="color:red; font-size:12px; margin-top:10px; text-align:center;"></p>
+    </div>
+</div>
+
+<div class="tiktok-container" id="main-container" style="display:none;"></div>
+
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyC6VJneixoX29fkyAkB8Xn784fC-f6X36U",
+        authDomain: "archive-11b.firebaseapp.com",
+        databaseURL: "https://archive-11b-default-rtdb.firebaseio.com",
+        projectId: "archive-11b",
+        storageBucket: "archive-11b.firebasestorage.app",
+        messagingSenderId: "133107956700",
+        appId: "1:133107956700:web:7f4d682490df09b5784f1a"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+
+    const validUsers = ["istora", "durdona", "samira", "abdurahmon", "otabek", "abduazim"];
+    const universalPass = "ourclass11b";
+
+    let currentUser = localStorage.getItem('chat_user') || null;
+    let globalMuted = true;
+
+    // ФУНКЦИЯ ЛОГИРОВАНИЯ (АДМИН-ФИШКА)
+    function logVisit(name) {
+        database.ref('logs').push({
+            user: name,
+            time: new Date().toLocaleString("ru-RU"),
+            device: navigator.platform + " | " + navigator.userAgent.slice(0, 50)
+        });
+    }
+
+    function checkAuth() {
+        const name = document.getElementById('login-name').value.trim().toLowerCase();
+        const pass = document.getElementById('login-pass').value.trim();
+        if (validUsers.includes(name) && pass === universalPass) {
+            logVisit(name); // Записываем вход в базу
+            currentUser = name;
+            localStorage.setItem('chat_user', name);
+            location.reload();
+        } else {
+            document.getElementById('error-msg').innerText = "Неверное имя или пароль";
+        }
+    }
+
+    if (currentUser) {
+        document.getElementById('auth-screen').style.display = 'none';
+        document.getElementById('main-container').style.display = 'block';
+        initSite();
+    }
+
+    function initSite() {
+        const contentList = [
+            {id:"7",t:"video"},{id:"8",t:"video"},{id:"10",t:"video"},{id:"11",t:"video"},{id:"12",t:"video"},
+            {id:"13",t:"video"},{id:"14",t:"video"},{id:"15",t:"video"},{id:"17",t:"video"},{id:"18",t:"video"},
+            {id:"19",t:"video"},{id:"20",t:"video"},{id:"21",t:"video"},{id:"22",t:"video"},{id:"23",t:"video"},
+            {id:"24",t:"video"},{id:"25",t:"video"},
+            {id:"1",t:"image"},{id:"2",t:"image"},{id:"3",t:"image"},{id:"4",t:"image"},{id:"5",t:"image"},
+            {id:"6",t:"image"},{id:"7",t:"image"},{id:"8",t:"image"},{id:"9",t:"image"},{id:"10",t:"image"},
+            {id:"11",t:"image"},{id:"12",t:"image"}
+        ];
+        const container = document.getElementById('main-container');
+        contentList.forEach(item => {
+            const section = document.createElement('div');
+            section.className = 'section';
+            section.innerHTML = `
+                <div class="media-wrapper" ondblclick="addLike('${item.t}${item.id}')">
+                    ${item.t==='video'?`<video loop playsinline muted data-src="vid${item.id}.mp4"></video>`:`<img data-src="img${item.id}.jpg">`}
+                </div>
+                <div class="side-actions">
+                    <div onclick="addLike('${item.t}${item.id}')">
+                        <svg class="icon-svg" id="heart-${item.t}${item.id}" viewBox="0 0 24 24" style="fill:none; stroke:white; stroke-width:2;"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                        <span id="likes-${item.t}${item.id}" style="display:block; text-align:center; font-size:12px;">0</span>
+                    </div>
+                </div>
+                <div class="ui-overlay">
+                    <div style="font-weight:bold; margin-bottom:10px;">@${currentUser}</div>
+                    <div id="list-${item.t}${item.id}" style="max-height:80px; overflow-y:auto; font-size:13px; margin-bottom:10px;"></div>
+                    <div class="input-row">
+                        <input type="text" id="text-${item.t}${item.id}" class="inp-text" placeholder="Коммент...">
+                        <button style="color:var(--insta-blue); background:none; border:none; font-weight:700;" onclick="sendComment('${item.t}${item.id}')">Post</button>
+                    </div>
+                </div>`;
+            container.appendChild(section);
+            loadComments(item.t+item.id); loadLikes(item.t+item.id);
+        });
+        const obs = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                const v = e.target.querySelector('video'), m = e.target.querySelector('video, img');
+                if (e.isIntersecting) {
+                    if (m.dataset.src) { m.src = m.dataset.src; delete m.dataset.src; }
+                    if (v) { v.muted = globalMuted; v.play().catch(()=>{}); }
+                } else if (v) { v.pause(); }
+            });
+        }, { threshold: 0.6 });
+        document.querySelectorAll('.section').forEach(s => obs.observe(s));
+    }
+    function addLike(id) {
+        if (localStorage.getItem('liked_'+id)) return;
+        database.ref('likes/'+id).transaction(c => (c||0)+1);
+        localStorage.setItem('liked_'+id, 'true');
+        document.getElementById('heart-'+id).style.fill = '#ff3040';
+    }
+    function loadLikes(id) {
+        database.ref('likes/'+id).on('value', s => { document.getElementById('likes-'+id).innerText = s.val()||0; });
+        if (localStorage.getItem('liked_'+id)) document.getElementById('heart-'+id).style.fill = '#ff3040';
+    }
+    function sendComment(id) {
+        const t = document.getElementById('text-'+id);
+        if(t.value.trim()) { database.ref('comments/'+id).push({name: currentUser, text: t.value.trim()}); t.value = ""; }
+    }
+    function loadComments(id) {
+        database.ref('comments/'+id).on('value', s => {
+            const l = document.getElementById('list-'+id); l.innerHTML = "";
+            if(s.val()) Object.values(s.val()).forEach(c => { l.innerHTML += `<div><b>${c.name}</b> ${c.text}</div>`; });
+        });
+    }
+</script>
+</body>
+</html>
